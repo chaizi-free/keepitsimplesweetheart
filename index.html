@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -13,53 +14,60 @@
     <style>
         :root { --bg: #F8F9FA; --card: #FFFFFF; --main: #343A40; --gold: #B89765; --red: #E63946; --line: #E9ECEF; --text-light: #6C757D; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, "SF Pro Text", sans-serif; background: var(--bg); color: var(--main); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* 允许页面垂直滚动 */
+        body { 
+            font-family: -apple-system, "SF Pro Text", sans-serif; 
+            background: var(--bg); 
+            color: var(--main); 
+            margin: 0; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+        }
 
-        /* 顶部导航 */
         .top-nav { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 0.9rem; z-index: 100; flex-shrink: 0; }
         .gain-book-link { color: var(--gold); font-weight: 500; cursor: pointer; }
 
-        /* 侧边工具 */
+        /* 侧边工具固定在屏幕两侧 */
         .side-tool { position: fixed; top: 45%; transform: translateY(-50%); background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 10px 18px; font-size: 0.75rem; color: var(--text-light); cursor: pointer; z-index: 500; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s; }
         .tool-left { left: -12px; padding-left: 25px; }
         .tool-right { right: -12px; padding-right: 25px; }
 
-        /* 容器布局 */
-        .container { flex: 1; width: 100%; max-width: 400px; margin: 0 auto; padding: 10px 20px; position: relative; display: flex; flex-direction: column; overflow: hidden; }
-        .view { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s ease; overflow: hidden; }
+        .container { flex: 1; width: 100%; max-width: 400px; margin: 0 auto; padding: 10px 20px; position: relative; display: flex; flex-direction: column; }
+        .view { display: none; flex-direction: column; min-height: 100%; animation: fadeIn 0.3s ease; }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 卡片 */
         .card { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid var(--line); margin-bottom: 15px; flex-shrink: 0; }
         .input-item { width: 100%; border: none; background: #F1F3F5; padding: 12px 16px; border-radius: 14px; font-size: 1rem; outline: none; font-family: inherit; }
         
-        /* 滚动区域 */
         .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; -webkit-overflow-scrolling: touch; }
-        .scroll-area::-webkit-scrollbar { width: 0px; background: transparent; }
-
         .item-card { background: var(--card); padding: 16px 20px; border-radius: 18px; border: 1px solid var(--line); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
-        /* 按钮 */
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding: 10px 0 20px; flex-shrink: 0; }
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding: 10px 0 20px; }
         button { padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.2s; color: var(--main); outline: none; }
         button.primary { background: var(--main); color: white; border: none; }
 
-        /* 备份管理专用按钮 */
-        .management-section { display: flex; gap: 10px; margin-bottom: 20px; flex-shrink: 0; }
-        .btn-manage { flex: 1; padding: 12px 5px; font-size: 0.75rem; border: 1px solid var(--gold); color: var(--gold); border-radius: 12px; background: transparent; }
-
-        .bottom-nav { height: 70px; display: none; align-items: center; justify-content: center; border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0; }
+        .bottom-nav { height: 70px; display: none; align-items: center; justify-content: center; border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0; margin-top: auto; }
         .home-link { color: var(--text-light); font-size: 0.85rem; cursor: pointer; padding: 10px 30px; }
 
-        /* 弹窗 */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal { background: var(--card); width: 85%; max-width: 320px; border-radius: 28px; padding: 25px; text-align: center; }
 
         .counter { font-family: "Courier New", monospace; color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; }
         .question-text { font-size: 1.3rem; font-weight: 500; margin-bottom: 20px; }
-        .temp-note-area { margin-top: 15px; background: #fdfcfb; border: 1px dashed var(--gold); border-radius: 15px; padding: 10px; flex-shrink: 0; }
+        .temp-note-area { margin-top: 15px; background: #fdfcfb; border: 1px dashed var(--gold); border-radius: 15px; padding: 10px; }
         .temp-note-input { width: 100%; border: none; background: transparent; font-size: 0.85rem; outline: none; resize: none; height: 60px; }
+        
+        /* 提示语样式 */
+        .stuck-hint { animation: fadeIn 0.8s ease forwards; text-align: center; padding: 30px 10px; }
+        .stuck-hint p { color: var(--text-light); font-size: 0.95rem; line-height: 1.8; margin-bottom: 30px; }
+
+        /* 专门为释放页增加底部滑动间距 */
+        #releaseView { padding-bottom: 80px; }
     </style>
 </head>
 <body>
@@ -70,8 +78,8 @@
     </div>
 
     <div id="side_rand_l" class="side-tool tool-left" onclick="v('randomView')">意愿确认</div>
-    <div id="side_rand_r" class="side-tool tool-right" onclick="openModal('stuckModal')">进行不下去</div>
-    <div id="side_targ_l" class="side-tool tool-left" onclick="enterTarget(cTIdx)">释放其他念头</div>
+    <div id="side_rand_r" class="side-tool tool-right" onclick="stuck()">进行不下去</div>
+    <div id="side_targ_l" class="side-tool tool-left" onclick="v('todoView')">释放其他念头</div>
     <div id="side_targ_r" class="side-tool tool-right" onclick="v('targetListView')">换个目标</div>
 
     <div class="container">
@@ -126,44 +134,17 @@
         </div>
 
         <div id="releaseView" class="view">
-            <div id="counter" class="counter">已释放：0 次</div>
-            <p id="relContext" style="font-size: 0.8rem; color: var(--text-light);"></p>
-            <p class="question-text">这背后隐藏着什么欲望？</p>
-            <div class="btn-group" style="margin-top:0">
-                <button onclick="countRelease(this)">想要控制</button>
-                <button onclick="countRelease(this)">想要认同</button>
-                <button onclick="countRelease(this)">想要安全</button>
-            </div>
-            <div class="temp-note-area">
-                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; margin-bottom: 5px;">
-                    <span style="color: var(--gold);">随时记录的想法</span>
-                    <span style="color: var(--text-light);" onclick="document.getElementById('tempNote').value=''">清空</span>
+            <div id="relContentWrapper">
                 </div>
-                <textarea id="tempNote" class="temp-note-input" placeholder="输入想法..."></textarea>
-            </div>
-            <div id="finishBeliefArea" style="margin-top: 15px; display: none;"><button class="primary" style="width:100%" onclick="finishCurrentBelief()">我感到这个念头释放了</button></div>
         </div>
 
         <div id="gainsView" class="view">
             <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;">Gains</div>
-            
-            <div class="management-section">
-                <button class="btn-manage" onclick="exportData()">💾 备份到剪贴板</button>
-                <button class="btn-manage" onclick="importData()">📥 导入数据</button>
-                <button class="btn-manage" style="border-color:var(--red); color:var(--red);" onclick="if(confirm('警告：将清空所有数据！')){targets=[];gains=[];save();renderGains();}">🗑️ 清空</button>
-            </div>
-
             <div id="gArea" class="scroll-area"></div>
         </div>
     </div>
 
     <div id="footerHome" class="bottom-nav"><div class="home-link" onclick="goHome()">回到首页</div></div>
-
-    <div id="stuckModal" class="overlay"><div class="modal">
-        <div style="font-weight:600; margin-bottom:15px;">卡住了？</div>
-        <button style="width:100%; margin-bottom:10px;" onclick="closeModal(); startMode('random')">我有抗拒</button>
-        <button style="width:100%;" onclick="closeModal()">取消</button>
-    </div></div>
 
     <div id="gainModal" class="overlay"><div class="modal">
         <div style="font-weight:600; margin-bottom:15px;">记录下此刻</div>
@@ -180,13 +161,67 @@
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('footerHome').style.display = (id === 'homeView') ? 'none' : 'flex';
-            const isRel = (id === 'releaseView'), isTodo = (id === 'todoView');
-            document.getElementById('side_targ_l').style.display = (mode === 'target' && (isRel || isTodo)) ? 'flex' : 'none';
+            
+            const isRel = (id === 'releaseView');
+            const isTodo = (id === 'todoView');
+
+            // 侧边栏逻辑：右侧“换个目标”在详情页和释放页都显示；左侧“释放其他念头”仅在释放页显示
             document.getElementById('side_targ_r').style.display = (mode === 'target' && (isRel || isTodo)) ? 'flex' : 'none';
+            document.getElementById('side_targ_l').style.display = (mode === 'target' && isRel) ? 'flex' : 'none';
+            
             document.getElementById('side_rand_l').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
             document.getElementById('side_rand_r').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
+            
             if(id === 'gainsView') renderGains();
             if(id === 'targetListView') renderTargets();
+            // 切换视图时滚动到顶部
+            window.scrollTo(0,0);
+        }
+
+        // 进行不下去逻辑
+        function stuck() {
+            const wrapper = document.getElementById('relContentWrapper');
+            wrapper.style.opacity = '0';
+            wrapper.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => {
+                wrapper.innerHTML = `
+                    <div class="stuck-hint">
+                        <p>不管是很抗拒，想改变or想维持<br>还是空空的在找感觉</p>
+                        <button class="primary" style="width:100%" onclick="resetReleaseArea()">释放想要控制</button>
+                    </div>
+                `;
+                wrapper.style.opacity = '1';
+            }, 400);
+        }
+
+        function resetReleaseArea() {
+            releaseCount++;
+            const wrapper = document.getElementById('relContentWrapper');
+            renderReleaseContent(wrapper);
+            updateCounter();
+        }
+
+        function renderReleaseContent(container) {
+            container.innerHTML = `
+                <div id="counter" class="counter">已释放：${releaseCount} 次</div>
+                <p id="relContext" style="font-size: 0.8rem; color: var(--text-light); margin-bottom:10px;">${mode === 'random' ? "此刻的感觉" : "针对：" + targets[cTIdx].todos[cBIdx].text}</p>
+                <p class="question-text">这背后隐藏着什么欲望？</p>
+                <div class="btn-group" style="margin-top:0">
+                    <button onclick="countRelease(this)">想要控制</button>
+                    <button onclick="countRelease(this)">想要认同</button>
+                    <button onclick="countRelease(this)">想要安全</button>
+                </div>
+                <div class="temp-note-area">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; margin-bottom: 5px;">
+                        <span style="color: var(--gold);">随时记录的想法</span>
+                        <span style="color: var(--text-light);" onclick="document.getElementById('tempNote').value=''">清空</span>
+                    </div>
+                    <textarea id="tempNote" class="temp-note-input" placeholder="输入想法..."></textarea>
+                </div>
+                <div id="finishBeliefArea" style="margin-top: 35px; padding-bottom: 20px; display: ${mode === 'random' ? 'none' : 'block'};">
+                    <button class="primary" style="width:100%; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" onclick="finishCurrentBelief()">我感到这个念头释放了</button>
+                </div>
+            `;
         }
 
         function goHome() { mode = ''; v('homeView'); }
@@ -194,15 +229,17 @@
         function closeModal() { document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none'); }
 
         function startMode(m) {
-            mode = m; releaseCount = 0; updateCounter();
-            document.getElementById('tempNote').value = '';
-            document.getElementById('relContext').innerText = m === 'random' ? "此刻的感觉" : `针对：${targets[cTIdx].todos[cBIdx].text}`;
-            document.getElementById('finishBeliefArea').style.display = m === 'random' ? 'none' : 'block';
+            mode = m; releaseCount = 0; 
+            const wrapper = document.getElementById('relContentWrapper');
+            renderReleaseContent(wrapper);
             v('releaseView');
         }
 
         function countRelease(btn) { releaseCount++; updateCounter(); btn.style.transform='scale(0.95)'; setTimeout(()=>btn.style.transform='scale(1)', 100); }
-        function updateCounter() { document.getElementById('counter').innerText = `已释放：${releaseCount} 次`; }
+        function updateCounter() { 
+            const el = document.getElementById('counter');
+            if(el) el.innerText = `已释放：${releaseCount} 次`; 
+        }
 
         function createTarget() {
             const val = document.getElementById('tIn').value;
@@ -236,32 +273,6 @@
         }
 
         function save() { localStorage.setItem('lib_t_v8', JSON.stringify(targets)); localStorage.setItem('lib_g_v8', JSON.stringify(gains)); }
-
-        // 数据备份逻辑
-        function exportData() {
-            const data = { t: targets, g: gains, v: '8.0' };
-            const str = btoa(encodeURIComponent(JSON.stringify(data)));
-            const tempInput = document.createElement("textarea");
-            tempInput.value = str;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("数据已打包并复制到剪贴板！请粘贴保存到备忘录。");
-        }
-
-        function importData() {
-            const str = prompt("请粘贴备份代码字符串：");
-            if(!str) return;
-            try {
-                const data = JSON.parse(decodeURIComponent(atob(str)));
-                if(data.t && data.g) {
-                    if(confirm("导入将覆盖此设备现有数据，确定？")) {
-                        targets = data.t; gains = data.g; save(); v('gainsView'); alert("同步成功！");
-                    }
-                } else { alert("数据格式不正确"); }
-            } catch(e) { alert("解码失败，请确保代码完整。"); }
-        }
 
         v('homeView');
     </script>
