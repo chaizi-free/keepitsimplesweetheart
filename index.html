@@ -3,75 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>深度释放 - 你的心灵空间</title>
+    <title>深度释放 - Keep it simple sweetheart</title>
     <style>
         :root { --bg: #F8F9FA; --card: #FFFFFF; --main: #343A40; --gold: #B89765; --red: #E63946; --line: #E9ECEF; --text-light: #6C757D; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, "SF Pro Text", sans-serif; background: var(--bg); color: var(--main); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-        /* 顶部导航 */
         .top-nav { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 0.9rem; z-index: 100; flex-shrink: 0; }
         .gain-book-link { color: var(--gold); font-weight: 500; cursor: pointer; }
-
-        /* 侧边悬浮工具 */
         .side-tool { position: fixed; top: 45%; transform: translateY(-50%); background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 10px 18px; font-size: 0.75rem; color: var(--text-light); cursor: pointer; z-index: 500; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.2s; }
         .tool-left { left: -12px; padding-left: 25px; }
         .tool-right { right: -12px; padding-right: 25px; }
-        .side-tool:active { background: #F1F3F5; transform: translateY(-50%) scale(0.95); }
-
-        /* 容器布局 */
         .container { flex: 1; width: 100%; max-width: 400px; margin: 0 auto; padding: 10px 20px; position: relative; display: flex; flex-direction: column; overflow: hidden; }
         .view { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s ease; overflow: hidden; }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 卡片与输入 */
         .card { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid var(--line); margin-bottom: 15px; flex-shrink: 0; }
         .input-group { text-align: left; margin-bottom: 15px; }
         .label { font-size: 0.7rem; color: var(--text-light); margin-left: 10px; margin-bottom: 5px; display: block; }
         .input-item { width: 100%; border: none; background: #F1F3F5; padding: 12px 16px; border-radius: 14px; font-size: 1rem; outline: none; font-family: inherit; }
         textarea.input-item { height: 80px; resize: none; }
-
-        /* 列表项 - 优化滚动适配电脑 */
-        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; scrollbar-width: thin; }
-        .scroll-area::-webkit-scrollbar { width: 4px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; }
-
+        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; -webkit-overflow-scrolling: touch; }
+        .scroll-area::-webkit-scrollbar { width: 0px; background: transparent; }
         .item-card { background: var(--card); padding: 16px 20px; border-radius: 18px; border: 1px solid var(--line); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-
-        /* 按钮系统 */
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding: 10px 0 20px; flex-shrink: 0; }
-        button { padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.2s; color: var(--main); }
+        button { padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.2s; color: var(--main); outline: none; }
         button.primary { background: var(--main); color: white; border: none; }
-
-        /* 底部导航 - 修正重叠问题 */
         .bottom-nav { height: 70px; display: none; align-items: center; justify-content: center; border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0; }
         .home-link { color: var(--text-light); font-size: 0.85rem; cursor: pointer; padding: 10px 30px; }
-
-        /* 弹窗系统 */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal { background: var(--card); width: 85%; max-width: 320px; border-radius: 28px; padding: 25px; text-align: center; position: relative; }
-
-        /* 计数器与释放提示 */
         .counter { font-family: "Courier New", monospace; color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; letter-spacing: 1px; }
-        .guide-text { font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px; }
         .question-text { font-size: 1.3rem; font-weight: 500; line-height: 1.4; margin-bottom: 20px; }
-
-        /* 临时记录框 */
-        .temp-note-area { margin-top: 15px; background: #fdfcfb; border: 1px dashed var(--gold); border-radius: 15px; padding: 10px; }
-        .temp-note-input { width: 100%; border: none; background: transparent; font-size: 0.85rem; color: var(--main); outline: none; resize: none; height: 60px; }
+        .temp-note-area { margin-top: 15px; background: #fdfcfb; border: 1px dashed var(--gold); border-radius: 15px; padding: 10px; flex-shrink: 0; }
+        .temp-note-input { width: 100%; border: none; background: transparent; font-size: 0.85rem; color: var(--main); outline: none; resize: none; height: 60px; font-family: inherit; }
+        
+        /* 备份按钮样式 */
+        .backup-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; flex-shrink: 0; }
+        .btn-small { padding: 10px; font-size: 0.75rem; border-radius: 12px; border: 1px solid var(--line); color: var(--text-light); }
     </style>
 </head>
 <body>
 
     <div class="top-nav">
-        <div style="font-weight: 300; letter-spacing: 1px;">Keep it simple sweetheart</div>
-        <div class="gain-book-link" onclick="v('gainsView')">🏆 Gains</div>
+        <div style="font-weight: 300; letter-spacing: 1px;">KEEP IT SIMPLE SWEETHEART</div>
+        <div class="gain-book-link" onclick="v('gainsView')">收获录</div>
     </div>
 
     <div id="side_rand_l" class="side-tool tool-left" onclick="v('randomView')">意愿确认</div>
     <div id="side_rand_r" class="side-tool tool-right" onclick="openModal('stuckModal')">进行不下去</div>
-
     <div id="side_targ_l" class="side-tool tool-left" onclick="enterTarget(cTIdx)">释放其他念头</div>
     <div id="side_targ_r" class="side-tool tool-right" onclick="v('targetListView')">换个目标</div>
 
@@ -99,9 +78,7 @@
 
         <div id="warnView" class="view">
             <div style="margin-top: 10vh; padding: 20px;">
-                <p style="color: var(--red); font-size: 1.1rem; line-height: 1.8; font-weight: 500;">
-                    追求心智故事不会得到世界，<br>更不会得到自由。
-                </p>
+                <p style="color: var(--red); font-size: 1.1rem; line-height: 1.8; font-weight: 500;">追求心智故事不会得到世界，<br>更不会得到自由。</p>
                 <button style="margin-top: 40px; width: 100%;" onclick="goHome()">我明白了，回到首页</button>
             </div>
         </div>
@@ -119,18 +96,14 @@
                     </div>
                     <button class="primary" style="align-self: flex-end; margin-bottom: 15px; padding: 12px 20px;" onclick="createTarget()">开启</button>
                 </div>
-                <div class="input-group">
-                    <label class="label">阻碍念头 (一行一个)</label>
-                    <textarea id="bIn" class="input-item" placeholder="我害怕...&#10;我觉得我不能..."></textarea>
-                </div>
+                <textarea id="bIn" class="input-item" placeholder="阻碍念头 (一行一个)"></textarea>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-light); margin-left: 10px; margin-bottom: 10px;">正在进行的目标：</div>
             <div id="tListArea" class="scroll-area"></div>
         </div>
 
         <div id="todoView" class="view">
-            <div id="todoTitle" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; padding: 0 10px; flex-shrink: 0;"></div>
-            <div class="card" style="padding: 10px;">
+            <div id="todoTitle" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; flex-shrink: 0;"></div>
+            <div class="card" style="padding: 10px; flex-shrink: 0;">
                 <input id="newBIn" class="input-item" style="background: transparent;" placeholder="+ 增加一个新的念头..." onkeydown="if(event.key==='Enter') addBelief()">
             </div>
             <div id="todoArea" class="scroll-area"></div>
@@ -141,35 +114,39 @@
         </div>
 
         <div id="releaseView" class="view">
-            <div style="margin-top: 2vh;">
+            <div style="margin-top: 2vh; flex-shrink: 0;">
                 <div id="counter" class="counter">已释放：0 次</div>
-                <p id="relContext" class="guide-text"></p>
+                <p id="relContext" style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px;"></p>
                 <p class="question-text">这背后隐藏着什么欲望？</p>
             </div>
-            <div id="relBtns" class="btn-group">
+            <div class="btn-group" style="margin-top: 0;">
                 <button onclick="countRelease(this)">想要控制</button>
                 <button onclick="countRelease(this)">想要认同</button>
                 <button onclick="countRelease(this)">想要安全</button>
             </div>
-            
             <div class="temp-note-area">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <span style="font-size: 0.65rem; color: var(--gold);">临时想法（随时清空）</span>
+                    <span style="font-size: 0.65rem; color: var(--gold);">临时想法（随记随清）</span>
                     <span style="font-size: 0.65rem; color: var(--text-light); cursor: pointer;" onclick="document.getElementById('tempNote').value=''">清空</span>
                 </div>
                 <textarea id="tempNote" class="temp-note-input" placeholder="此刻冒出了什么想法..."></textarea>
             </div>
-
-            <div id="finishBeliefArea" style="margin-top: 20px; display: none;">
+            <div id="finishBeliefArea" style="margin-top: 20px; display: none; flex-shrink: 0;">
                 <button class="primary" style="width: 100%;" onclick="finishCurrentBelief()">我感到这个念头释放了</button>
             </div>
         </div>
 
         <div id="gainsView" class="view">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
                 <span style="font-size: 1.2rem; font-weight: 600;">收获录</span>
-                <span style="font-size: 0.8rem; color: var(--text-light);" onclick="if(confirm('清空所有记录？')){gains=[];save();renderGains();}">清空</span>
+                <span style="font-size: 0.8rem; color: var(--text-light); cursor: pointer;" onclick="if(confirm('彻底删除所有记录？')){targets=[];gains=[];save();renderGains();}">重置</span>
             </div>
+            
+            <div class="backup-btns">
+                <button class="btn-small" onclick="exportData()">备份到剪贴板</button>
+                <button class="btn-small" onclick="importData()">导入备份数据</button>
+            </div>
+
             <div id="gArea" class="scroll-area"></div>
         </div>
     </div>
@@ -180,9 +157,8 @@
 
     <div id="stuckModal" class="overlay">
         <div class="modal">
-            <span style="position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-light); cursor: pointer;" onclick="closeModal()">×</span>
-            <div style="font-weight: 600; margin-bottom: 10px; font-size: 1.1rem;">进行不下去？</div>
-            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px; line-height: 1.5;">没关系，这是心智在抵抗。让我们识别这一刻的情绪：</p>
+            <div style="font-weight: 600; margin-bottom: 10px;">进行不下去？</div>
+            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px;">这是心智在抵抗，让我们识别它：</p>
             <button style="width: 100%; margin-bottom: 12px;" onclick="closeModal(); startMode('random')">卡住了</button>
             <button style="width: 100%;" onclick="closeModal(); startMode('random')">脑子空空的</button>
         </div>
@@ -190,11 +166,9 @@
 
     <div id="gainModal" class="overlay">
         <div class="modal">
-            <span style="position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-light); cursor: pointer;" onclick="closeModal()">×</span>
-            <div style="font-weight: 600; margin-bottom: 10px; font-size: 1.1rem;">恭喜你！</div>
-            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px; line-height: 1.5;">记录下这一刻的轻松感或新的发现：</p>
-            <textarea id="gainNote" class="input-item" style="height: 100px; margin-bottom: 15px;" placeholder="此时此刻我的感受是..."></textarea>
-            <button class="primary" style="width: 100%;" onclick="saveGainRecord()">保存并归档</button>
+            <div style="font-weight: 600; margin-bottom: 10px;">记录下这一刻</div>
+            <textarea id="gainNote" class="input-item" style="height: 100px; margin-bottom: 15px;" placeholder="这一刻的感受是..."></textarea>
+            <button class="primary" style="width: 100%;" onclick="saveGainRecord()">归档</button>
         </div>
     </div>
 
@@ -206,147 +180,82 @@
         function v(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
             document.getElementById('footerHome').style.display = (id === 'homeView') ? 'none' : 'flex';
-            
             const isRel = (id === 'releaseView');
             const isTodo = (id === 'todoView');
-
-            // 侧边栏逻辑：进入释放页面或待办页面时显示对应的侧边入口
-            const isTargetMode = (mode === 'target');
-            document.getElementById('side_targ_l').style.display = (isTargetMode && (isRel || isTodo)) ? 'flex' : 'none';
-            document.getElementById('side_targ_r').style.display = (isTargetMode && (isRel || isTodo)) ? 'flex' : 'none';
-
-            const isRandMode = (mode === 'random');
-            document.getElementById('side_rand_l').style.display = (isRandMode && isRel) ? 'flex' : 'none';
-            document.getElementById('side_rand_r').style.display = (isRandMode && isRel) ? 'flex' : 'none';
-
+            document.getElementById('side_targ_l').style.display = (mode === 'target' && (isRel || isTodo)) ? 'flex' : 'none';
+            document.getElementById('side_targ_r').style.display = (mode === 'target' && (isRel || isTodo)) ? 'flex' : 'none';
+            document.getElementById('side_rand_l').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
+            document.getElementById('side_rand_r').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
             if(id === 'gainsView') renderGains();
             if(id === 'targetListView') renderTargets();
         }
 
         function goHome() { mode = ''; v('homeView'); }
-        function openModal(id, extra) { 
-            if(extra) currentGainType = extra;
-            document.getElementById(id).style.display = 'flex'; 
-        }
+        function openModal(id, extra) { if(extra) currentGainType = extra; document.getElementById(id).style.display = 'flex'; }
         function closeModal() { document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none'); }
 
         function startMode(m) {
-            mode = m;
-            releaseCount = 0;
-            updateCounter();
-            document.getElementById('tempNote').value = ''; // 切换时清空临时记录
-            if(m === 'random') {
-                document.getElementById('relContext').innerText = "此刻浮现的感觉";
-                document.getElementById('finishBeliefArea').style.display = 'none';
-                v('releaseView');
-            } else {
-                document.getElementById('relContext').innerText = `针对念头：${targets[cTIdx].todos[cBIdx].text}`;
-                document.getElementById('finishBeliefArea').style.display = 'block';
-                v('releaseView');
-            }
+            mode = m; releaseCount = 0; updateCounter();
+            document.getElementById('tempNote').value = '';
+            document.getElementById('relContext').innerText = m === 'random' ? "此刻浮现的感觉" : `针对念头：${targets[cTIdx].todos[cBIdx].text}`;
+            document.getElementById('finishBeliefArea').style.display = m === 'random' ? 'none' : 'block';
+            v('releaseView');
         }
 
-        // 计数逻辑
-        function countRelease(btn) {
-            releaseCount++;
-            updateCounter();
-            btn.style.background = "#F1F3F5";
-            setTimeout(() => btn.style.background = "var(--card)", 150);
-        }
-
-        function updateCounter() {
-            document.getElementById('counter').innerText = `已释放：${releaseCount} 次`;
-        }
+        function countRelease(btn) { releaseCount++; updateCounter(); btn.style.background = "#F1F3F5"; setTimeout(() => btn.style.background = "var(--card)", 150); }
+        function updateCounter() { document.getElementById('counter').innerText = `已释放：${releaseCount} 次`; }
 
         function createTarget() {
             const val = document.getElementById('tIn').value;
             const beliefs = document.getElementById('bIn').value.split('\n').filter(s => s.trim());
-            if(!val) return alert("请输入一个目标");
-            targets.unshift({
-                title: val,
-                deadline: document.getElementById('dIn').value || 7,
-                createdAt: Date.now(),
-                todos: beliefs.map(b => ({ text: b, done: false })),
-                totalCount: 0
-            });
-            save(); renderTargets();
-            document.getElementById('tIn').value = ''; document.getElementById('bIn').value = '';
+            if(!val) return alert("请输入目标");
+            targets.unshift({ title: val, deadline: document.getElementById('dIn').value || 7, createdAt: Date.now(), todos: beliefs.map(b => ({ text: b, done: false })) });
+            save(); renderTargets(); document.getElementById('tIn').value = ''; document.getElementById('bIn').value = '';
         }
 
         function renderTargets() {
-            const now = Date.now();
-            document.getElementById('tListArea').innerHTML = targets.map((t, i) => {
-                const dayLeft = Math.ceil((t.createdAt + t.deadline * 86400000 - now) / 86400000);
-                return `
+            document.getElementById('tListArea').innerHTML = targets.map((t, i) => `
                 <div class="item-card" onclick="enterTarget(${i})">
-                    <div style="flex: 1; overflow: hidden; padding-right: 10px;">
-                        <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.title}</div>
-                        <div style="font-size: 0.65rem; color: ${dayLeft<0? 'var(--red)':'var(--text-light)'}; margin-top: 4px;">
-                            ${dayLeft < 0 ? '已过期' : '剩余 ' + dayLeft + ' 天'}
-                        </div>
-                    </div>
-                    <span style="color: #DEE2E6; font-size: 1.2rem; flex-shrink: 0;" onclick="event.stopPropagation(); if(confirm('确定删除吗？')){targets.splice(${i},1); save(); renderTargets();}">×</span>
-                </div>`;
-            }).join('');
-        }
-
-        function enterTarget(idx) {
-            cTIdx = idx;
-            mode = 'target'; // 确保进入目标模式
-            document.getElementById('todoTitle').innerText = targets[idx].title;
-            renderTodos(); v('todoView');
-        }
-
-        function renderTodos() {
-            document.getElementById('todoArea').innerHTML = targets[cTIdx].todos.map((b, i) => `
-                <div class="item-card" style="opacity: ${b.done ? 0.4 : 1}" onclick="if(!${b.done}){cBIdx=${i}; startMode('target');}">
-                    <div style="font-size: 0.95rem; flex: 1;">${b.text}</div>
-                    <span style="color: var(--gold); flex-shrink: 0;">${b.done ? '✓' : '→'}</span>
+                    <div style="flex: 1; overflow: hidden;"><div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.title}</div></div>
+                    <span style="color: #DEE2E6; margin-left:10px;" onclick="event.stopPropagation(); if(confirm('删除目标？')){targets.splice(${i},1); save(); renderTargets();}">×</span>
                 </div>`).join('');
         }
 
-        function addBelief() {
-            const input = document.getElementById('newBIn');
-            if(!input.value.trim()) return;
-            targets[cTIdx].todos.push({ text: input.value.trim(), done: false });
-            input.value = ''; save(); renderTodos();
-        }
-
-        function finishCurrentBelief() {
-            targets[cTIdx].todos[cBIdx].done = true;
-            targets[cTIdx].totalCount = (targets[cTIdx].totalCount || 0) + releaseCount;
-            save(); enterTarget(cTIdx);
-        }
+        function enterTarget(idx) { cTIdx = idx; mode = 'target'; document.getElementById('todoTitle').innerText = targets[idx].title; renderTodos(); v('todoView'); }
+        function renderTodos() { document.getElementById('todoArea').innerHTML = targets[cTIdx].todos.map((b, i) => `<div class="item-card" style="opacity: ${b.done ? 0.4 : 1}" onclick="if(!${b.done}){cBIdx=${i}; startMode('target');}"><div style="flex:1">${b.text}</div><span>${b.done ? '✓' : '→'}</span></div>`).join(''); }
+        function addBelief() { const input = document.getElementById('newBIn'); if(!input.value.trim()) return; targets[cTIdx].todos.push({ text: input.value.trim(), done: false }); input.value = ''; save(); renderTodos(); }
+        function finishCurrentBelief() { targets[cTIdx].todos[cBIdx].done = true; save(); enterTarget(cTIdx); }
 
         function saveGainRecord() {
             const note = document.getElementById('gainNote').value;
-            gains.unshift({
-                title: targets[cTIdx].title,
-                type: currentGainType,
-                note: note || "释放完成，内心重获平静。",
-                date: new Date().toLocaleDateString()
-            });
-            targets.splice(cTIdx, 1);
-            save(); localStorage.setItem('lib_g_v8', JSON.stringify(gains));
-            document.getElementById('gainNote').value = '';
-            closeModal(); goHome();
+            gains.unshift({ title: targets[cTIdx].title, type: currentGainType, note: note || "释放完成。", date: new Date().toLocaleDateString() });
+            targets.splice(cTIdx, 1); save(); document.getElementById('gainNote').value = ''; closeModal(); goHome();
         }
 
         function renderGains() {
-            document.getElementById('gArea').innerHTML = gains.map(g => `
-                <div class="card" style="text-align: left;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--gold); margin-bottom: 8px;">
-                        <span>${g.type === 'achieved' ? '🏆 如愿以偿' : '🧘 彻底放下'}</span>
-                        <span>${g.date}</span>
-                    </div>
-                    <div style="font-weight: 600; margin-bottom: 8px;">${g.title}</div>
-                    <div style="font-size: 0.85rem; color: var(--text-light); line-height: 1.6;">${g.note}</div>
-                </div>`).join('');
+            document.getElementById('gArea').innerHTML = gains.map(g => `<div class="card" style="text-align: left;"><div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--gold); margin-bottom:8px;"><span>${g.type==='achieved'?'🏆 如愿':'🧘 放下'}</span><span>${g.date}</span></div><div style="font-weight:600; margin-bottom:5px;">${g.title}</div><div style="font-size:0.85rem; color:var(--text-light);">${g.note}</div></div>`).join('');
         }
 
-        function save() { localStorage.setItem('lib_t_v8', JSON.stringify(targets)); }
+        function save() { localStorage.setItem('lib_t_v8', JSON.stringify(targets)); localStorage.setItem('lib_g_v8', JSON.stringify(gains)); }
+
+        // 备份功能
+        function exportData() {
+            const data = { t: targets, g: gains };
+            const str = btoa(encodeURIComponent(JSON.stringify(data)));
+            navigator.clipboard.writeText(str).then(() => alert("备份数据已复制！请妥善保存那段代码。"));
+        }
+
+        function importData() {
+            const str = prompt("请粘贴备份数据代码：");
+            if(!str) return;
+            try {
+                const data = JSON.parse(decodeURIComponent(atob(str)));
+                if(confirm("导入将覆盖现有数据，确定吗？")) {
+                    targets = data.t; gains = data.g; save(); renderGains(); alert("导入成功！");
+                }
+            } catch(e) { alert("无效的备份代码。"); }
+        }
 
         v('homeView');
     </script>
