@@ -39,7 +39,7 @@
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid var(--line); margin-bottom: 15px; flex-shrink: 0; }
+        .card { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid var(--line); margin-bottom: 15px; flex-shrink: 0; position: relative; }
         .input-item { width: 100%; border: none; background: #F1F3F5; padding: 12px 16px; border-radius: 14px; font-size: 1rem; outline: none; font-family: inherit; }
         
         .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; -webkit-overflow-scrolling: touch; }
@@ -65,6 +65,10 @@
         
         .stuck-hint { animation: fadeIn 0.8s ease forwards; text-align: center; padding: 30px 10px; }
         .stuck-hint p { color: var(--text-light); font-size: 0.95rem; line-height: 1.8; margin-bottom: 30px; }
+
+        /* 新增：专门给删除/撤回叉号加的手型样式 */
+        .btn-close-icon { cursor: pointer; padding: 0 5px; transition: opacity 0.2s; }
+        .btn-close-icon:hover { opacity: 0.6; }
 
         #releaseView { padding-bottom: 80px; }
     </style>
@@ -126,9 +130,10 @@
             <div id="todoTitle" style="font-weight: 600; margin-bottom: 15px;"></div>
             <div class="card" style="padding: 10px; flex-shrink: 0;"><input id="newBIn" class="input-item" style="background:transparent" placeholder="+ 增加念头" onkeydown="if(event.key==='Enter') addBelief()"></div>
             <div id="todoArea" class="scroll-area"></div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px 0;">
-                <button onclick="openModal('gainModal', 'achieved')" style="border-color: var(--gold); color: var(--gold);">如愿以偿</button>
-                <button onclick="openModal('gainModal', 'dropped')">彻底放下</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 15px 0;">
+                <button onclick="openModal('gainModal', 'achieved')" style="border-color: var(--gold); color: var(--gold); font-size: 0.8rem;">如愿 👍</button>
+                <button onclick="openModal('gainModal', 'dropped')" style="font-size: 0.8rem;">放下 🧘</button>
+                <button onclick="openModal('gainModal', 'failed')" style="border-color: var(--red); color: var(--red); font-size: 0.8rem;">未果 ❌</button>
             </div>
         </div>
 
@@ -139,8 +144,8 @@
         <div id="gainsView" class="view">
             <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;">Gains</div>
             <div class="management-section">
-                <button class="btn-manage" onclick="exportData()">💾 备份到剪贴板</button>
-                <button class="btn-manage" onclick="importData()">📥 导入数据</button>
+                <button class="btn-manage" onclick="exportData()">💾 备份</button>
+                <button class="btn-manage" onclick="importData()">📥 导入</button>
                 <button class="btn-manage" style="border-color:var(--red); color:var(--red);" onclick="if(confirm('警告：将清空所有数据！')){targets=[];gains=[];save();renderGains();}">🗑️ 清空</button>
             </div>
             <div id="gArea" class="scroll-area"></div>
@@ -153,22 +158,32 @@
         <div style="font-weight:600; margin-bottom:15px;">记录下此刻</div>
         <textarea id="gainNote" class="input-item" style="height: 100px; margin-bottom: 15px;"></textarea>
         <button class="primary" style="width: 100%;" onclick="saveGainRecord()">保存归档</button>
+        <button style="width: 100%; border:none; margin-top:10px; color:var(--text-light); font-size:0.8rem;" onclick="closeModal()">取消</button>
+    </div></div>
+
+    <div id="editGainModal" class="overlay"><div class="modal">
+        <div style="font-weight:600; margin-bottom:15px;">修改记录内容</div>
+        <textarea id="editGainNote" class="input-item" style="height: 100px; margin-bottom: 15px;"></textarea>
+        <button class="primary" style="width: 100%;" onclick="confirmEditGain()">更新</button>
+        <button style="width: 100%; border:none; margin-top:10px; color:var(--text-light); font-size:0.8rem;" onclick="closeModal()">取消</button>
     </div></div>
 
     <script>
         let targets = JSON.parse(localStorage.getItem('lib_t_v8')) || [];
         let gains = JSON.parse(localStorage.getItem('lib_g_v8')) || [];
-        let cTIdx = -1, cBIdx = -1, mode = '', releaseCount = 0, currentGainType = '';
+        let cTIdx = -1, cBIdx = -1, cGIdx = -1, mode = '', releaseCount = 0, currentGainType = '';
 
         function v(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('footerHome').style.display = (id === 'homeView') ? 'none' : 'flex';
+            
             const isRel = (id === 'releaseView'), isTodo = (id === 'todoView');
             document.getElementById('side_targ_r').style.display = (mode === 'target' && (isRel || isTodo)) ? 'flex' : 'none';
             document.getElementById('side_targ_l').style.display = (mode === 'target' && isRel) ? 'flex' : 'none';
             document.getElementById('side_rand_l').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
             document.getElementById('side_rand_r').style.display = (mode === 'random' && isRel) ? 'flex' : 'none';
+            
             if(id === 'gainsView') renderGains();
             if(id === 'targetListView') renderTargets();
             window.scrollTo(0,0);
@@ -226,7 +241,7 @@
         }
 
         function renderTargets() {
-            document.getElementById('tListArea').innerHTML = targets.map((t, i) => `<div class="item-card" onclick="enterTarget(${i})"><div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.title}</div><span style="color:#DEE2E6; margin-left:10px;" onclick="event.stopPropagation(); if(confirm('删除目标？')){targets.splice(${i},1); save(); renderTargets();}">×</span></div>`).join('');
+            document.getElementById('tListArea').innerHTML = targets.map((t, i) => `<div class="item-card" onclick="enterTarget(${i})"><div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.title}</div><span class="btn-close-icon" style="color:#DEE2E6; margin-left:10px;" onclick="event.stopPropagation(); if(confirm('彻底删除？')){targets.splice(${i},1); save(); renderTargets();}">×</span></div>`).join('');
         }
 
         function enterTarget(idx) { cTIdx = idx; mode = 'target'; document.getElementById('todoTitle').innerText = targets[idx].title; renderTodos(); v('todoView'); }
@@ -236,16 +251,51 @@
 
         function saveGainRecord() {
             const note = document.getElementById('gainNote').value;
-            gains.unshift({ title: targets[cTIdx].title, type: currentGainType, note: note || "已完成释放。", date: new Date().toLocaleDateString() });
-            targets.splice(cTIdx, 1); save(); document.getElementById('gainNote').value = ''; closeModal(); goHome();
+            const record = { ...targets[cTIdx], type: currentGainType, note: note || "已归档。", date: new Date().toLocaleDateString() };
+            gains.unshift(record);
+            targets.splice(cTIdx, 1); 
+            save(); document.getElementById('gainNote').value = ''; closeModal(); renderGains(); v('gainsView');
         }
 
         function renderGains() {
-            document.getElementById('gArea').innerHTML = gains.length ? gains.map(g => `<div class="card" style="text-align:left;"><div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--gold); margin-bottom:8px;"><span>${g.type==='achieved'?'🏆 如愿':'🧘 放下'}</span><span>${g.date}</span></div><div style="font-weight:600; margin-bottom:5px;">${g.title}</div><div style="font-size:0.85rem; color:var(--text-light);">${g.note}</div></div>`).join('') : '<p style="text-align:center; color:#ccc; margin-top:50px;">暂无收获记录</p>';
+            const typeMap = { achieved: '🏆 如愿', dropped: '🧘 放下', failed: '❌ 未果' };
+            document.getElementById('gArea').innerHTML = gains.length ? gains.map((g, i) => `
+                <div class="card" style="text-align:left;" onclick="editGain(${i})">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--gold); margin-bottom:8px;">
+                        <span>${typeMap[g.type] || '归档'}</span>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span>${g.date}</span>
+                            <span class="btn-close-icon" style="color:#CCC; font-size:1.1rem;" onclick="event.stopPropagation(); revokeGain(${i})">×</span>
+                        </div>
+                    </div>
+                    <div style="font-weight:600; margin-bottom:5px;">${g.title}</div>
+                    <div style="font-size:0.85rem; color:var(--text-light); white-space:pre-wrap;">${g.note}</div>
+                </div>`).join('') : '<p style="text-align:center; color:#ccc; margin-top:50px;">暂无收获记录</p>';
+        }
+
+        function revokeGain(idx) {
+            if(confirm('撤回到“进行中”的目标清单？')) {
+                const item = gains[idx];
+                const { type, note, date, ...originalTarget } = item;
+                targets.unshift(originalTarget);
+                gains.splice(idx, 1);
+                save(); renderGains();
+            }
+        }
+
+        function editGain(idx) {
+            cGIdx = idx;
+            document.getElementById('editGainNote').value = gains[idx].note;
+            openModal('editGainModal');
+        }
+
+        function confirmEditGain() {
+            gains[cGIdx].note = document.getElementById('editGainNote').value;
+            save(); closeModal(); renderGains();
         }
 
         function exportData() {
-            const data = { t: targets, g: gains, v: '8.0' }, str = btoa(encodeURIComponent(JSON.stringify(data))), temp = document.createElement("textarea");
+            const data = { t: targets, g: gains, v: '8.1' }, str = btoa(encodeURIComponent(JSON.stringify(data))), temp = document.createElement("textarea");
             temp.value = str; document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp);
             alert("数据已打包并复制到剪贴板！");
         }
@@ -259,6 +309,7 @@
         function goHome() { mode = ''; v('homeView'); }
         function openModal(id, extra) { if(extra) currentGainType = extra; document.getElementById(id).style.display = 'flex'; }
         function closeModal() { document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none'); }
+        
         v('homeView');
     </script>
 </body>
