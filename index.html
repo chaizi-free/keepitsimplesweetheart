@@ -241,7 +241,7 @@
         }
 
         function renderTargets() {
-            document.getElementById('tListArea').innerHTML = targets.map((t, i) => `<div class="item-card" onclick="enterTarget(${i})"><div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.title}</div><span class="btn-close-icon" style="color:#DEE2E6; margin-left:10px;" onclick="event.stopPropagation(); if(confirm('彻底删除？')){targets.splice(${i},1); save(); renderTargets();}">×</span></div>`).join('');
+            document.getElementById('tListArea').innerHTML = targets.map((t, i) => `<div class="item-card" onclick="enterTarget(${i})"><div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.title}</div><span class="btn-close-icon" style="color:#DEE2E6; margin-left:10px;" onclick="event.stopPropagation(); if(confirm('彻底删除这个目标及其所有念头？')){targets.splice(${i},1); save(); renderTargets();}">×</span></div>`).join('');
         }
 
         function enterTarget(idx) { cTIdx = idx; mode = 'target'; document.getElementById('todoTitle').innerText = targets[idx].title; renderTodos(); v('todoView'); }
